@@ -95,7 +95,6 @@ def average(x):
 
 @njit
 def jackknife_sample_generate_binning(x, func, bin_borders):
-    print(bin_borders)
     m = x.shape[0]
     n = x.shape[1]
     sum_x = np.zeros(m)
@@ -116,7 +115,6 @@ def jackknife_sample_generate_binning(x, func, bin_borders):
 
 @njit
 def jackknife_var_numba_binning(x, func, bin_borders):
-    n = x.shape[1]
     x1 = jackknife_sample_generate_binning(x, func, bin_borders)
     j_est = x1.mean()
     sigma = 0
