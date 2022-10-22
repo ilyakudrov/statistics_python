@@ -109,7 +109,6 @@ def jackknife_sample_generate_binning(x, func, bin_borders):
             sum_tmp = sum_x[j]
             for k in range(bin_borders[i], bin_borders[i + 1]):
                 sum_tmp -= x[j][k]
-            print(sum_tmp)
             y[j][i] = sum_tmp / (n - bin_borders[i + 1] + bin_borders[i])
 
     return func(y)
