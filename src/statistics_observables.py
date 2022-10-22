@@ -91,3 +91,37 @@ def jackknife_var_numba(x, func):
 @njit
 def average(x):
     return x[0]
+
+
+@njit
+def jackknife_sample_generate_binning(x, func, bin_borders):
+    print(bin_borders)
+    m = x.shape[0]
+    n = x.shape[1]
+    sum_x = np.zeros(m)
+    y = np.zeros((m, len(bin_borders) - 1))
+    for j in range(m):
+        for i in range(n):
+            sum_x[j] += x[j][i]
+
+    for j in range(m):
+        for i in range(len(bin_borders) - 1):
+            sum_tmp = sum_x[j]
+            for k in range(bin_borders[i], bin_borders[i + 1]):
+                sum_tmp -= x[j][k]
+            print(sum_tmp)
+            y[j][i] = sum_tmp / (n - bin_borders[i + 1] + bin_borders[i])
+
+    return func(y)
+
+
+@njit
+def jackknife_var_numba_binning(x, func, bin_borders):
+    n = x.shape[1]
+    x1 = jackknife_sample_generate_binning(x, func, bin_borders)
+    j_est = x1.mean()
+    sigma = 0
+    binned_size = len(x1)
+    for i in range(binned_size):
+        sigma += (x1[i] - j_est)**2
+    return j_est, math.sqrt((binned_size - 1) / (binned_size + .0) * sigma)
