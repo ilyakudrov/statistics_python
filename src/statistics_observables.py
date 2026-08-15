@@ -32,7 +32,7 @@ def jackknife_var(x, func):
 
 
 @njit
-def bootstrap_smaple_generate(x, func, K):
+def bootstrap_sample_generate(x, func, K):
     n = x.shape[1]
     m = x.shape[0]
     y = np.zeros((m, K))
@@ -51,7 +51,37 @@ def bootstrap_smaple_generate(x, func, K):
 
 @njit
 def bootstrap_numba(x, func, K):
-    sample = bootstrap_smaple_generate(x, func, K)
+    sample = bootstrap_sample_generate(x, func, K)
+    estimate = sample.mean()
+    sigma = 0
+    n = sample.shape[0]
+    for i in range(n):
+        sigma += (sample[i] - estimate)**2
+    return estimate, math.sqrt((n - 1) / (n + .0) * sigma)
+
+
+@njit
+def bootstrap_sample_generate_binning(x, func, K, bin_borders):
+    n = x.shape[1]
+    m = x.shape[0]
+    y = np.zeros((m, K))
+    for k in range(m):
+        for i in range(K):
+            for j in range(len(bin_borders) - 1):
+                rand = np.random.randint(0, len(bin_borders) - 1)
+                tmp = 0
+                for l in range(bin_borders[rand], bin_borders[rand + 1]):
+                    tmp += x[k][l]
+                y[k][i] += tmp / (bin_borders[rand + 1] - bin_borders[rand])
+    for k in range(m):
+        for i in range(K):
+            y[k][i] = y[k][i] / (len(bin_borders) - 1)
+    return func(y)
+
+
+@njit
+def bootstrap_numba_binning(x, func, K, bin_borders):
+    sample = bootstrap_sample_generate_binning(x, func, K, bin_borders)
     estimate = sample.mean()
     sigma = 0
     n = sample.shape[0]
