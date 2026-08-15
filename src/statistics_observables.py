@@ -65,10 +65,11 @@ def bootstrap_sample_generate_binning(x, func, K, bin_borders):
     n = x.shape[1]
     m = x.shape[0]
     y = np.zeros((m, K))
-    for k in range(m):
-        for i in range(K):
-            for j in range(len(bin_borders) - 1):
-                rand = np.random.randint(0, len(bin_borders) - 1)
+
+    for i in range(K):
+        for j in range(len(bin_borders) - 1):
+            rand = np.random.randint(0, len(bin_borders) - 1)
+            for k in range(m):
                 tmp = 0
                 for l in range(bin_borders[rand], bin_borders[rand + 1]):
                     tmp += x[k][l]
