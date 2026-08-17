@@ -57,7 +57,7 @@ def bootstrap_numba(x, func, K):
     n = sample.shape[0]
     for i in range(n):
         sigma += (sample[i] - estimate)**2
-    return estimate, math.sqrt((n - 1) / (n + .0) * sigma)
+    return estimate, math.sqrt(sigma / n)
 
 
 @njit
@@ -88,7 +88,7 @@ def bootstrap_numba_binning(x, func, K, bin_borders):
     n = sample.shape[0]
     for i in range(n):
         sigma += (sample[i] - estimate)**2
-    return estimate, math.sqrt((n - 1) / (n + .0) * sigma)
+    return estimate, math.sqrt(sigma / n)
 
 
 @njit
